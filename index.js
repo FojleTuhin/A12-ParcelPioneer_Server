@@ -29,8 +29,9 @@ async function run() {
   try {
 
     const usersCollection = client.db("ParcelPioneer").collection('users');
+    const parcelCollection = client.db("ParcelPioneer").collection('allParcel');
 
-
+    //Admin related api
     //users related api
     //post user collection in database
     app.post('/users', async (req, res) => {
@@ -49,19 +50,50 @@ async function run() {
     })
 
 
- 
-
-
-
-    app.get('/users', async(req, res)=>{
+    app.get('/users', async (req, res) => {
       const result = await usersCollection.find().toArray();
-      res.send(result) ;
+      res.send(result);
+    })
+
+
+
+    app.get('/users/:email', async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email }
+      const result = await usersCollection.findOne(query);
+      res.send(result)
+    })
+
+
+
+    //User related api
+    // update user info in database
+    app.put('/users/:email', async (req, res) => {
+      const email = req.params.email;
+      const filter = { email: email }
+      const options = { upsert: true };
+      const updateUser = req.body;
+      const User = {
+        $set: {
+          photo: updateUser.image,
+          name: updateUser.displayName,
+          phone: updateUser.phoneNumber
+        }
+      }
+      const result = await usersCollection.updateOne(filter, User, options);
+      res.send(result);
     })
 
 
 
 
-
+    app.post('/allParcel', async (req, res) => {
+      const newParcel = req.body;
+      console.log(newParcel);
+      const result = await parcelCollection.insertOne(newParcel);
+      res.send(result)
+    })
+   
 
 
 
