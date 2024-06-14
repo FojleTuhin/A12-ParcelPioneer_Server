@@ -1,5 +1,5 @@
-const express =  require('express');
-const cors =  require('cors');
+const express = require('express');
+const cors = require('cors');
 require('dotenv').config();
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const app = express();
@@ -9,7 +9,7 @@ const port = process.env.port || 5000;
 app.use(express.json());
 
 app.use(cors({
-    origin:["http://localhost:5173","http://localhost:5174"]
+  origin: ["http://localhost:5173", "http://localhost:5174"]
 }))
 
 
@@ -32,22 +32,31 @@ async function run() {
 
 
     //users related api
-    app.post('/users',async(req, res) =>{
-        const user = req.body;
+    //post user collection in database
+    app.post('/users', async (req, res) => {
+      const user = req.body;
 
-        const query = {email: user.emai}
-        const isExistingUser = await usersCollection.findOne(query);
+      const query = { email: user.email }
+      const isExistingUser = await usersCollection.findOne(query);
 
-        if(isExistingUser){
-            return res.send({
-                message: 'user already exists', insertedId:null
-            })
-        }
-        const result = await usersCollection.insertOne(user);
-        res.send(result);
+      if (isExistingUser) {
+        return res.send({
+          message: 'user already exists', insertedId: null
+        })
+      }
+      const result = await usersCollection.insertOne(user);
+      res.send(result);
     })
 
 
+ 
+
+
+
+    app.get('/users', async(req, res)=>{
+      const result = await usersCollection.find().toArray();
+      res.send(result) ;
+    })
 
 
 
@@ -72,29 +81,9 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('Hello from ParcelPioneer');
+  res.send('Hello from ParcelPioneer');
 })
 
-app.listen(port, () =>{
-    console.log(`Server is running on port: ${port}`);
+app.listen(port, () => {
+  console.log(`Server is running on port: ${port}`);
 })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
