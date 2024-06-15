@@ -134,6 +134,14 @@ async function run() {
     })
 
 
+    app.get('/deliveryList/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = {deliveryManId: id}
+      const result = await parcelCollection.find(query).toArray();
+      res.send(result)
+    })
+
+
     app.patch('/makeAdmin/:id', async(req, res) =>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)};
