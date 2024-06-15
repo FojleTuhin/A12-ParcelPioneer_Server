@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.port || 5000;
 
@@ -93,6 +93,25 @@ async function run() {
 
 
 
+    app.put('/allParcel/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true };
+      const updateBooking = req.body;
+      const Booking = {
+        $set: {
+          approximateDaliveryDate: updateBooking.deliveryDate,
+          deliveryManId: updateBooking.deliveryManId,
+          status: updateBooking.status
+        }
+      }
+      const result = await parcelCollection.updateOne(filter, Booking, options);
+      res.send(result);
+    })
+
+
+
+
     app.post('/allParcel', async (req, res) => {
       const newParcel = req.body;
       console.log(newParcel);
@@ -111,6 +130,36 @@ async function run() {
       const email = req.params.email;
       const query = { email: email }
       const result = await parcelCollection.find(query).toArray();
+      res.send(result);
+    })
+
+
+    app.patch('/makeAdmin/:id', async(req, res) =>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const updateDoc = {
+        $set:{
+          role: 'admin'
+        }
+      }
+
+      const result = await usersCollection.updateOne(query, updateDoc);
+      res.send(result);
+    })
+
+
+
+    
+    app.patch('/makeDeliveryMan/:id', async(req, res) =>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const updateDoc = {
+        $set:{
+          role: 'deliveryMan'
+        }
+      }
+
+      const result = await usersCollection.updateOne(query, updateDoc);
       res.send(result);
     })
 
