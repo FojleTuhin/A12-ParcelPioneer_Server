@@ -56,6 +56,12 @@ async function run() {
     })
 
 
+    app.get('/deliveryMan', async (req, res) => {
+      const query = { role: 'deliveryMan' }
+      const result = await usersCollection.find(query).toArray();
+      res.send(result);
+    })
+
 
     app.get('/users/:email', async (req, res) => {
       const email = req.params.email;
@@ -93,11 +99,17 @@ async function run() {
       const result = await parcelCollection.insertOne(newParcel);
       res.send(result)
     })
-   
+
+
+    app.get('/allParcel', async (req, res) => {
+      const result = await parcelCollection.find().toArray();
+      res.send(result)
+    })
+
 
     app.get('/allParcel/:email', async (req, res) => {
       const email = req.params.email;
-      const query ={ email: email}
+      const query = { email: email }
       const result = await parcelCollection.find(query).toArray();
       res.send(result);
     })
