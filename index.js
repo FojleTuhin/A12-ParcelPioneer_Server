@@ -75,7 +75,7 @@ async function run() {
       const updateUser = req.body;
       const User = {
         $set: {
-          photo: updateUser.image,
+          photo: updateUser.photo,
           name: updateUser.displayName,
           phone: updateUser.phoneNumber
         }
