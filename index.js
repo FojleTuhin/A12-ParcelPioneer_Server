@@ -30,6 +30,7 @@ async function run() {
 
     const usersCollection = client.db("ParcelPioneer").collection('users');
     const parcelCollection = client.db("ParcelPioneer").collection('allParcel');
+    const feedbackCollection = client.db("ParcelPioneer").collection('feedback');
 
 
     //post user collection in database
@@ -131,6 +132,21 @@ async function run() {
       const newParcel = req.body;
       console.log(newParcel);
       const result = await parcelCollection.insertOne(newParcel);
+      res.send(result)
+    })
+
+
+    app.post('/feedback', async (req, res) => {
+      const newFeedback = req.body;
+      console.log(newFeedback);
+      const result = await feedbackCollection.insertOne(newFeedback);
+      res.send(result)
+    })
+
+    app.get('/feedback/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = {deliveryManId: id}
+      const result = await feedbackCollection.find(query).toArray();
       res.send(result)
     })
 
