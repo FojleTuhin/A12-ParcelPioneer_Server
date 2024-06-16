@@ -126,6 +126,14 @@ async function run() {
     })
 
 
+    
+    app.get('/totalDelivered', async (req, res) => {
+      const query= {status: "delivered"}
+      const result = await parcelCollection.find(query).toArray();
+      res.send(result)
+    })
+
+
     app.get('/allParcel/:email', async (req, res) => {
       const email = req.params.email;
       const query = { email: email }
