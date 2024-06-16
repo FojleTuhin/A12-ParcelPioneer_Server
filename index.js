@@ -157,15 +157,15 @@ async function run() {
     })
 
 
-    // app.get('/myTotalDeliveredList/:id', async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { deliveryManId: new ObjectId(id) }
-    //   if (query) {
-    //     const query = { status: 'delivered' }
-    //     const result = await parcelCollection.find(query).toArray();
-    //     res.send(result)
-    //   }
-    // })
+    app.get('/update/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const result = await parcelCollection.findOne(query);
+      res.send(result);
+    })
+
+
+
 
 
 
@@ -275,12 +275,7 @@ async function run() {
 
 
     
-    // app.delete('/users/:id', verifyToken, verifyAdmin, async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: new ObjectId(id) }
-    //   const result = await userCollection.deleteOne(query);
-    //   res.send(result);
-    // })
+      
 
 
 
@@ -298,6 +293,35 @@ async function run() {
       res.send(result);
     })
 
+
+
+    // app.put('/update/:id', async (req, res) => {
+    //   const id = req.params.id;
+    //   const filter = { _id: new ObjectId(id) }
+    //   const options = { upsert: true };
+    //   const updateParcel= req.body;
+    //   const parcel = {
+    //     $set: {
+    //       name: updateParcel.name,
+    //       email:updateParcel.email,
+    //       phone:updateParcel.phone,
+    //       receiverName:updateParcel.receiverName,
+    //       receiversNumber:updateParcel.receiversNumber,
+    //       requestedDeliveryDate:updateParcel.requestedDeliveryDate,
+    //       place:updateParcel.place,
+    //       latitude:updateParcel.latitude,
+    //       longitude:updateParcel.longitude,
+    //       type:updateParcel.type,
+    //       weight:updateParcel.weight,
+    //       bookingDate:updateParcel.bookingDate,
+    //       price:updateParcel.price,
+    //       status:updateParcel.status
+    //     }
+    //   }
+
+    //   const result = await parcelCollection.updateOne(filter, parcel, options);
+    //   res.send(result);
+    // })
 
 
 
