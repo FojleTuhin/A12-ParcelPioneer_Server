@@ -31,8 +31,7 @@ async function run() {
     const usersCollection = client.db("ParcelPioneer").collection('users');
     const parcelCollection = client.db("ParcelPioneer").collection('allParcel');
 
-    //Admin related api
-    //users related api
+
     //post user collection in database
     app.post('/users', async (req, res) => {
       const user = req.body;
@@ -142,6 +141,17 @@ async function run() {
     })
 
 
+    // app.get('/myTotalDeliveredList/:id', async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { deliveryManId: new ObjectId(id) }
+    //   if (query) {
+    //     const query = { status: 'delivered' }
+    //     const result = await parcelCollection.find(query).toArray();
+    //     res.send(result)
+    //   }
+    // })
+
+
 
     app.get('/totalDelivered', async (req, res) => {
       const query = { status: "delivered" }
@@ -185,12 +195,12 @@ async function run() {
 
 
 
-    app.patch('/bookingCancel/:id', async (req, res) => {
+    app.patch('/bookingReturned/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const updateDoc = {
         $set: {
-          status: 'canceled'
+          status: 'returned'
         }
       }
 
@@ -213,6 +223,32 @@ async function run() {
       const result = await parcelCollection.updateOne(query, updateDoc);
       res.send(result);
     })
+
+    app.patch('/totalDeliveredNumber/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      
+      const updateDoc = {
+        $inc: {
+          numberOfParcelDelivered: 1
+        }
+      }
+
+      const result = await usersCollection.updateOne(query, updateDoc);
+      res.send(result);
+    })
+
+
+
+
+
+    
+    // app.delete('/users/:id', verifyToken, verifyAdmin, async (req, res) => {
+    //   const id = req.params.id;
+    //   const query = { _id: new ObjectId(id) }
+    //   const result = await userCollection.deleteOne(query);
+    //   res.send(result);
+    // })
 
 
 
