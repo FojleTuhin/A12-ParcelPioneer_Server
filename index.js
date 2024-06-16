@@ -50,17 +50,33 @@ async function run() {
     })
 
 
-    app.get('/users', async (req, res) => {
-      const result = await usersCollection.find().toArray();
+    app.get('/totalAdmin', async (req, res) => {
+      const query = { role: 'admin' }
+      const result = await usersCollection.find(query).toArray();
       res.send(result);
     })
-
 
     app.get('/deliveryMan', async (req, res) => {
       const query = { role: 'deliveryMan' }
       const result = await usersCollection.find(query).toArray();
       res.send(result);
     })
+
+
+    app.get('/regularUser', async (req, res) => {
+      const query = { role: 'regularUser' }
+      const result = await usersCollection.find(query).toArray();
+      res.send(result);
+    })
+
+
+    app.get('/users', async (req, res) => {
+      const result = await usersCollection.find().toArray();
+      res.send(result);
+    })
+
+
+
 
 
     app.get('/users/:email', async (req, res) => {
@@ -126,12 +142,15 @@ async function run() {
     })
 
 
-    
+
     app.get('/totalDelivered', async (req, res) => {
-      const query= {status: "delivered"}
+      const query = { status: "delivered" }
       const result = await parcelCollection.find(query).toArray();
       res.send(result)
     })
+
+
+
 
 
     app.get('/allParcel/:email', async (req, res) => {
@@ -142,19 +161,19 @@ async function run() {
     })
 
 
-    app.get('/deliveryList/:id', async(req, res)=>{
+    app.get('/deliveryList/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {deliveryManId: id}
+      const query = { deliveryManId: id }
       const result = await parcelCollection.find(query).toArray();
       res.send(result)
     })
 
 
-    app.patch('/makeAdmin/:id', async(req, res) =>{
+    app.patch('/makeAdmin/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const updateDoc = {
-        $set:{
+        $set: {
           role: 'admin'
         }
       }
@@ -166,11 +185,11 @@ async function run() {
 
 
 
-    app.patch('/bookingCancel/:id', async(req, res) =>{
+    app.patch('/bookingCancel/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const updateDoc = {
-        $set:{
+        $set: {
           status: 'canceled'
         }
       }
@@ -182,11 +201,11 @@ async function run() {
 
 
 
-    app.patch('/delivered/:id', async(req, res) =>{
+    app.patch('/delivered/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const updateDoc = {
-        $set:{
+        $set: {
           status: 'delivered'
         }
       }
@@ -197,12 +216,12 @@ async function run() {
 
 
 
-    
-    app.patch('/makeDeliveryMan/:id', async(req, res) =>{
+
+    app.patch('/makeDeliveryMan/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const updateDoc = {
-        $set:{
+        $set: {
           role: 'deliveryMan'
         }
       }
