@@ -55,7 +55,7 @@ async function run() {
       const result = await usersCollection.find(query).toArray();
       res.send(result);
     })
-
+    // get data of a  delivery man 
     app.get('/deliveryMan', async (req, res) => {
       const query = { role: 'deliveryMan' }
       const result = await usersCollection.find(query).toArray();
@@ -145,7 +145,7 @@ async function run() {
 
     app.get('/feedback/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {deliveryManId: id}
+      const query = { deliveryManId: id }
       const result = await feedbackCollection.find(query).toArray();
       res.send(result)
     })
@@ -156,10 +156,15 @@ async function run() {
       res.send(result)
     })
 
+    app.get('/feedback', async (req, res) => {
+      const result = await feedbackCollection.find().toArray();
+      res.send(result)
+    })
 
-    app.get('/update/:id', async(req, res)=>{
+
+    app.get('/update/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const result = await parcelCollection.findOne(query);
       res.send(result);
     })
@@ -243,7 +248,7 @@ async function run() {
 
 
 
-    
+
     app.patch('/canceled/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -256,10 +261,13 @@ async function run() {
       const result = await parcelCollection.updateOne(query, updateDoc);
       res.send(result);
     })
+
+
+
     app.patch('/totalDeliveredNumber/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
-      
+
       const updateDoc = {
         $inc: {
           numberOfParcelDelivered: 1
@@ -268,6 +276,64 @@ async function run() {
 
       const result = await usersCollection.updateOne(query, updateDoc);
       res.send(result);
+    })
+
+
+
+    app.patch('/calculateAvgRating/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+
+      const aggregationResult = await feedbackCollection.aggregate([
+        {
+          $match: { deliveryManId: id }
+        },
+        {
+          $group: {
+            _id: "$deliveryManId",
+            averageRating: { $avg: "$rating" },
+          }
+        }
+      ]).toArray();
+
+
+      if (aggregationResult.length > 0) {
+        const averageRating = aggregationResult[0].averageRating;
+
+        const updateDoc = {
+          $set: {
+            averageRating: averageRating
+          }
+        };
+
+        const result = await usersCollection.updateOne(query, updateDoc);
+        res.send(result);
+      } else {
+        res.status(404).send('No feedback found for the given delivery man ID');
+      }
+
+    });
+
+
+    app.get('/topDeliveryMan', async (req, res) => {
+      const topDeliveryMan = await usersCollection.aggregate([
+        {
+          $match: {
+            role: 'deliveryMan'
+          }
+        },
+        {
+          $sort: {
+            numberOfParcelDelivered: -1,
+            averageRating: -1
+          }
+        },
+        {
+          $limit: 3 // Fetch the top 3 delivery men
+        }
+      ]).toArray();
+      // const result =  usersCollection.find(topDeliveryMan).toArray();
+      res.send(topDeliveryMan);
     })
 
 
@@ -297,35 +363,29 @@ async function run() {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) }
       const options = { upsert: true };
-      const updateParcel= req.body;
+      const updateParcel = req.body;
       const parcel = {
         $set: {
           name: updateParcel.name,
-          email:updateParcel.email,
-          phone:updateParcel.phone,
-          receiverName:updateParcel.receiverName,
-          receiversNumber:updateParcel.receiversNumber,
-          requestedDeliveryDate:updateParcel.requestedDeliveryDate,
-          place:updateParcel.place,
-          latitude:updateParcel.latitude,
-          longitude:updateParcel.longitude,
-          type:updateParcel.type,
-          weight:updateParcel.weight,
-          bookingDate:updateParcel.bookingDate,
-          price:updateParcel.price,
-          status:updateParcel.status
+          email: updateParcel.email,
+          phone: updateParcel.phone,
+          receiverName: updateParcel.receiverName,
+          receiversNumber: updateParcel.receiversNumber,
+          requestedDeliveryDate: updateParcel.requestedDeliveryDate,
+          place: updateParcel.place,
+          latitude: updateParcel.latitude,
+          longitude: updateParcel.longitude,
+          type: updateParcel.type,
+          weight: updateParcel.weight,
+          bookingDate: updateParcel.bookingDate,
+          price: updateParcel.price,
+          status: updateParcel.status
         }
       }
 
       const result = await parcelCollection.updateOne(filter, parcel, options);
       res.send(result);
     })
-
-
-
-
-
-
 
 
 
