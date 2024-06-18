@@ -186,7 +186,13 @@ async function run() {
 
     app.get('/allParcel/:email', async (req, res) => {
       const email = req.params.email;
-      const query = { email: email }
+      const search = req.query.search;
+      const query = {
+        email: email,
+        status: { $regex: search, $options: 'i' }
+      }
+      
+
       const result = await parcelCollection.find(query).toArray();
       res.send(result);
     })
