@@ -152,6 +152,14 @@ async function run() {
 
 
     app.get('/allParcel', async (req, res) => {
+    //  const from = req.query.from;
+    //  const to = req.query.to;
+    //   const query = {
+    //     requestedDeliveryDate: {
+    //       $gte: new Date(from),
+    //       $lte: new Date(to)
+    //     }
+    //   };
       const result = await parcelCollection.find().toArray();
       res.send(result)
     })
@@ -191,7 +199,7 @@ async function run() {
         email: email,
         status: { $regex: search, $options: 'i' }
       }
-      
+
 
       const result = await parcelCollection.find(query).toArray();
       res.send(result);
