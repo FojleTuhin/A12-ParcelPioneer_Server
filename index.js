@@ -5,6 +5,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.port || 5000;
 const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY);
+const jwt = require('jsonwebtoken')
 
 app.use(express.json());
 
@@ -31,6 +32,13 @@ async function run() {
     const usersCollection = client.db("ParcelPioneer").collection('users');
     const parcelCollection = client.db("ParcelPioneer").collection('allParcel');
     const feedbackCollection = client.db("ParcelPioneer").collection('feedback');
+
+
+    app.post('/jwt', async (req, res) => {
+      const user = req.body;
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1h' });
+      res.send({ token });
+    })
 
 
     //post user collection in database
