@@ -4,7 +4,7 @@ require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const port = process.env.port || 5000;
-
+const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY);
 
 app.use(express.json());
 
@@ -170,9 +170,18 @@ async function run() {
     })
 
 
+
     app.get('/update/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
+      const result = await parcelCollection.findOne(query);
+      res.send(result);
+    })
+
+
+    app.get('/payment/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query= {_id: new ObjectId(id)};
       const result = await parcelCollection.findOne(query);
       res.send(result);
     })
@@ -343,7 +352,7 @@ async function run() {
           }
         },
         {
-          $limit: 3 // Fetch the top 3 delivery men
+          $limit: 3
         }
       ]).toArray();
       // const result =  usersCollection.find(topDeliveryMan).toArray();
@@ -400,6 +409,28 @@ async function run() {
       const result = await parcelCollection.updateOne(filter, parcel, options);
       res.send(result);
     })
+
+
+
+    //payment intent
+    app.post('/create-payment-intent', async (req, res) => {
+      const { price } = req.body;
+      const amount = parseInt(price * 100);
+      console.log(amount, 'amount inside the intent')
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: amount,
+        currency: 'usd',
+        payment_method_types: ['card']
+      });
+
+      res.send({
+        clientSecret: paymentIntent.client_secret
+      })
+    });
+
+
+
 
 
 
