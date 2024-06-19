@@ -127,7 +127,7 @@ async function run() {
 
 
 
-
+    //add parcel from customer
     app.post('/allParcel', async (req, res) => {
       const newParcel = req.body;
       console.log(newParcel);
@@ -135,14 +135,14 @@ async function run() {
       res.send(result)
     })
 
-
+    //add feedback from customer
     app.post('/feedback', async (req, res) => {
       const newFeedback = req.body;
       console.log(newFeedback);
       const result = await feedbackCollection.insertOne(newFeedback);
       res.send(result)
     })
-
+    //get feedback of a specific deliver man
     app.get('/feedback/:id', async (req, res) => {
       const id = req.params.id;
       const query = { deliveryManId: id }
@@ -150,10 +150,9 @@ async function run() {
       res.send(result)
     })
 
-
+    // get all parcel
     app.get('/allParcel', async (req, res) => {
-      //  const from = req.query.from;
-      //  const to = req.query.to;
+      //  const {from, to} = req.query;
       //   const query = {
       //     requestedDeliveryDate: {
       //       $gte: new Date(from),
@@ -164,13 +163,14 @@ async function run() {
       res.send(result)
     })
 
+    // get all feedback data from db
     app.get('/feedback', async (req, res) => {
       const result = await feedbackCollection.find().toArray();
       res.send(result)
     })
 
 
-
+    //find data for update a item
     app.get('/update/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -179,6 +179,7 @@ async function run() {
     })
 
 
+    //get payment by specific parcel id
     app.get('/payment/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -190,7 +191,7 @@ async function run() {
 
 
 
-
+    // get total delivery
     app.get('/totalDelivered', async (req, res) => {
       const query = { status: "delivered" }
       const result = await parcelCollection.find(query).toArray();
@@ -200,7 +201,7 @@ async function run() {
 
 
 
-
+    //get all parcel for a specific customer
     app.get('/allParcel/:email', async (req, res) => {
       const email = req.params.email;
       const search = req.query.search;
@@ -208,13 +209,11 @@ async function run() {
         email: email,
         status: { $regex: search, $options: 'i' }
       }
-
-
       const result = await parcelCollection.find(query).toArray();
       res.send(result);
     })
 
-
+    //get delivery list for a specific delivery man
     app.get('/deliveryList/:id', async (req, res) => {
       const id = req.params.id;
       const query = { deliveryManId: id }
@@ -223,6 +222,7 @@ async function run() {
     })
 
 
+    //Make admin 
     app.patch('/makeAdmin/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -238,7 +238,7 @@ async function run() {
 
 
 
-
+    //Parcel returned by the delivery man
     app.patch('/bookingReturned/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -254,6 +254,7 @@ async function run() {
 
 
 
+    // Parcel delivered by the delivery man
 
     app.patch('/delivered/:id', async (req, res) => {
       const id = req.params.id;
@@ -263,7 +264,6 @@ async function run() {
           status: 'delivered'
         }
       }
-
       const result = await parcelCollection.updateOne(query, updateDoc);
       res.send(result);
     })
@@ -271,7 +271,7 @@ async function run() {
 
 
 
-
+    // Parcel canceled by the user
     app.patch('/canceled/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -287,6 +287,7 @@ async function run() {
 
 
 
+    // Update number of parcel of all deluvery man
     app.patch('/totalDeliveredNumber/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -302,6 +303,8 @@ async function run() {
     })
 
 
+
+    // Find deliveryman avg rating
 
     app.patch('/calculateAvgRating/:id', async (req, res) => {
       const id = req.params.id;
@@ -338,6 +341,8 @@ async function run() {
     });
 
 
+
+    //Find top delivery man
     app.get('/topDeliveryMan', async (req, res) => {
       const topDeliveryMan = await usersCollection.aggregate([
         {
@@ -366,7 +371,7 @@ async function run() {
 
 
 
-
+    // Make delivery man
     app.patch('/makeDeliveryMan/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -381,7 +386,7 @@ async function run() {
     })
 
 
-
+    //Update parcel
     app.put('/update/:id', async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) }
@@ -411,9 +416,10 @@ async function run() {
     })
 
 
-    app.patch('/paymentDone/:id', async(req, res)=>{
+    // update data when customer give the money
+    app.patch('/paymentDone/:id', async (req, res) => {
       const id = req.params.id;
-      const query = {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const updateDoc = {
         $set: {
           payment: 'Done'
