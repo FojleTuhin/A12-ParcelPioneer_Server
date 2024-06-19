@@ -152,14 +152,14 @@ async function run() {
 
 
     app.get('/allParcel', async (req, res) => {
-    //  const from = req.query.from;
-    //  const to = req.query.to;
-    //   const query = {
-    //     requestedDeliveryDate: {
-    //       $gte: new Date(from),
-    //       $lte: new Date(to)
-    //     }
-    //   };
+      //  const from = req.query.from;
+      //  const to = req.query.to;
+      //   const query = {
+      //     requestedDeliveryDate: {
+      //       $gte: new Date(from),
+      //       $lte: new Date(to)
+      //     }
+      //   };
       const result = await parcelCollection.find().toArray();
       res.send(result)
     })
@@ -179,9 +179,9 @@ async function run() {
     })
 
 
-    app.get('/payment/:id', async(req, res)=>{
+    app.get('/payment/:id', async (req, res) => {
       const id = req.params.id;
-      const query= {_id: new ObjectId(id)};
+      const query = { _id: new ObjectId(id) };
       const result = await parcelCollection.findOne(query);
       res.send(result);
     })
@@ -411,6 +411,19 @@ async function run() {
     })
 
 
+    app.patch('/paymentDone/:id', async(req, res)=>{
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id)};
+      const updateDoc = {
+        $set: {
+          payment: 'Done'
+        }
+      }
+      const result = await parcelCollection.updateOne(query, updateDoc);
+      res.send(result)
+    })
+
+
 
     //payment intent
     app.post('/create-payment-intent', async (req, res) => {
@@ -428,6 +441,8 @@ async function run() {
         clientSecret: paymentIntent.client_secret
       })
     });
+
+
 
 
 
