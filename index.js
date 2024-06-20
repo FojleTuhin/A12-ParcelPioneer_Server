@@ -72,14 +72,14 @@ async function run() {
 
 
     // get all parcel
-    app.get('/allParcel', verifyToken, verifyAdmin, async (req, res) => {
-      //  const {from, to} = req.query;
-      //   const query = {
-      //     requestedDeliveryDate: {
-      //       $gte: new Date(from),
-      //       $lte: new Date(to)
-      //     }
-      //   };
+    app.get('/allParcel', verifyToken, async (req, res) => {
+      // const { from, to } = req.query;
+      // const query = {
+      //   requestedDeliveryDate: {
+      //     $gte: new Date(from),
+      //     $lte: new Date(to)
+      //   }
+      // };
       const result = await parcelCollection.find().toArray();
       res.send(result)
     })
@@ -161,7 +161,7 @@ async function run() {
 
 
 
-    app.put('/allParcel/:id',verifyAdmin, verifyToken, async (req, res) => {
+    app.put('/allParcel/:id', verifyToken, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) }
       const options = { upsert: true };
@@ -243,7 +243,7 @@ async function run() {
 
 
     //get all parcel for a specific customer
-    app.get('/allParcel/:email',verifyToken, async (req, res) => {
+    app.get('/allParcel/:email', verifyToken, async (req, res) => {
       const email = req.params.email;
       const search = req.query.search;
       const query = {
@@ -255,7 +255,7 @@ async function run() {
     })
 
     //get delivery list for a specific delivery man
-    app.get('/deliveryList/:id',verifyToken, async (req, res) => {
+    app.get('/deliveryList/:id', verifyToken, async (req, res) => {
       const id = req.params.id;
       const query = { deliveryManId: id }
       const result = await parcelCollection.find(query).toArray();
