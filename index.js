@@ -7,11 +7,16 @@ const port = process.env.PORT || 5000;
 const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY);
 const jwt = require('jsonwebtoken')
 
+
 app.use(express.json());
 
-app.use(cors({
-  origin: ["http://localhost:5173", "http://localhost:5174"]
-}))
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
+
 
 
 
