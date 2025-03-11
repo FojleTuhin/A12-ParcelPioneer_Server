@@ -3,14 +3,14 @@ const cors = require('cors');
 require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
-const port = process.env.port || 5000;
+const port = process.env.PORT || 5000;
 const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY);
 const jwt = require('jsonwebtoken')
 
 app.use(express.json());
 
 app.use(cors({
-  origin: ["*"]
+  origin: ["http://localhost:5173", "http://localhost:5174"]
 }))
 
 
@@ -510,7 +510,7 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-  res.send('Hello from ParcelPioneer');
+  res.send('Hello from ParcelPioneer server');
 })
 
 app.listen(port, () => {
