@@ -8,15 +8,16 @@ const stripe = require('stripe')(process.env.PAYMENT_SECRET_KEY);
 const jwt = require('jsonwebtoken')
 
 
+
+
 app.use(express.json());
 
-app.use(
-  cors({
-    origin: "*",
-    credentials: true,
-  })
-);
 
+app.use(cors({
+    // origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin:"*",
+    credentials: true
+}));
 
 
 
@@ -244,6 +245,14 @@ async function run() {
     app.get('/totalDelivered', async (req, res) => {
       const query = { status: "delivered" }
       const result = await parcelCollection.find(query).toArray();
+      res.send(result)
+    })
+
+
+    // get total parcel
+    app.get('/totalParcel', async (req, res) => {
+      // const query = { status: "delivered" }
+      const result = await parcelCollection.find().toArray();
       res.send(result)
     })
 
