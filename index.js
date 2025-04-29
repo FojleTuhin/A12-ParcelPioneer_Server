@@ -181,6 +181,11 @@ async function run() {
       const result = await usersCollection.updateOne(filter, User, options);
       res.send(result);
     });
+
+
+
+
+    
     app.put("/allParcel/:id", verifyToken, async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) };
