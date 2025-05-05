@@ -186,22 +186,64 @@ async function run() {
 
 
     
+    // app.put("/allParcel/:id", verifyToken, async (req, res) => {
+    //   const id = req.params.id;
+    //   const filter = { _id: new ObjectId(id) };
+    //   const options = { upsert: true };
+    //   const updateBooking = req.body;
+    //   console.log(updateBooking, "update booking");
+    //   const Booking = {
+    //     $set: {
+    //       approximateDaliveryDate: updateBooking.deliveryDate,
+    //       deliveryManId: updateBooking.deliveryManId,
+    //       status: updateBooking.status,
+    //       deliveryManName: updateBooking.deliveryManName,
+    //     },
+    //   };
+    //   const result = await parcelCollection.updateOne(filter, Booking, options);
+    //   res.send(result);
+    // });
+
     app.put("/allParcel/:id", verifyToken, async (req, res) => {
-      const id = req.params.id;
-      const filter = { _id: new ObjectId(id) };
-      const options = { upsert: true };
-      const updateBooking = req.body;
-      console.log(updateBooking, "update booking");
-      const Booking = {
-        $set: {
-          approximateDaliveryDate: updateBooking.deliveryDate,
-          deliveryManId: updateBooking.deliveryManId,
-          status: updateBooking.status,
-          deliveryManName: updateBooking.deliveryManName,
-        },
-      };
-      const result = await parcelCollection.updateOne(filter, Booking, options);
-      res.send(result);
+      try {
+        const id = req.params.id;
+        const filter = { _id: new ObjectId(id) };
+        const options = { upsert: true };
+        const updateBooking = req.body;
+        
+        console.log("ID:", id);
+        console.log("Full request body:", JSON.stringify(req.body));
+        console.log("Delivery man name:", updateBooking.deliveryManName);
+        
+        // Check if deliveryManName exists
+        if (!updateBooking.deliveryManName) {
+          console.error("deliveryManName is missing in the request body");
+          return res.status(400).send({ error: "deliveryManName is required" });
+        }
+        
+        const Booking = {
+          $set: {
+            approximateDaliveryDate: updateBooking.deliveryDate,
+            deliveryManId: updateBooking.deliveryManId,
+            status: updateBooking.status,
+            deliveryManName: updateBooking.deliveryManName,
+          },
+        };
+        
+        console.log("Update operation:", JSON.stringify(Booking));
+        
+        const result = await parcelCollection.updateOne(filter, Booking, options);
+        console.log("MongoDB update result:", result);
+        
+        // Verify the update
+        const updatedDoc = await parcelCollection.findOne(filter);
+        console.log("Updated document:", updatedDoc);
+        
+        res.send(result);
+      } catch (error) {
+        console.error("Error updating parcel:", error);
+        res.status(500).send({ error: error.message });
+      }
     });
 
     //add parcel from customer
